@@ -92,8 +92,10 @@ class ViewController: UIViewController {
         
         
         timerBar.backgroundColor = UIColor.whiteColor()
-        timerBar.frame = CGRectMake(0,0,0,6)
+        timerBar.frame = CGRectMake(0,0,0,30)
         self.view.addSubview(timerBar)
+        
+        self.resetTimerWithSpeed(5)
         
         
         // Do any additional setup after loading the view, typically from a nib.
@@ -106,15 +108,22 @@ class ViewController: UIViewController {
             timer!.invalidate()
         }
         
-        timer = NSTimer(timeInterval: speed, target: self, selector: Selector("timerDone"), userInfo: nil, repeats: false)
-    
+        timer = NSTimer.scheduledTimerWithTimeInterval(speed, target: self, selector: Selector("timerDone"), userInfo: nil, repeats: false)
+        
         timerBar.frame.size.width = SCREEN_WIDTH
         
         UIView.animateWithDuration(speed, animations: { () -> Void in
-       
-            self.timerBar.frame.size.width = 0
             
         })
+        
+        UIView.animateWithDuration(speed, delay: 0, options: .CurveLinear, animations: { () -> Void in
+            
+              self.timerBar.frame.size.width = 0
+            
+            }) { (succeeded: Bool) -> Void in
+            
+                
+        }
         
 
     }
