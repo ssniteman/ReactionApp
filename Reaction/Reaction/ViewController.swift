@@ -180,6 +180,8 @@ class ViewController: UIViewController {
         if buttonToTap == button.tag {
             
             currentScore++
+            
+            checkAchievement()
             runLevel()
             
         } else {
@@ -259,6 +261,25 @@ class ViewController: UIViewController {
         
         
         var player = GKPlayer()
+        
+    }
+    
+    func checkAchievement() {
+        
+        if currentScore >= 50 {
+            
+            var score50 = GKAchievement(identifier: "score_50")
+            
+            score50.percentComplete = 100
+            
+            GKAchievement.reportAchievements([], withCompletionHandler: { (error) -> Void in
+                
+                
+                println("achievement sent")
+                
+            })
+            
+        }
         
     }
     
