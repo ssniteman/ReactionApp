@@ -8,6 +8,8 @@
 
 import UIKit
 
+import GameKit
+
 let SCREEN_WIDTH = UIScreen.mainScreen().bounds.size.width
 let SCREEN_HEIGHT = UIScreen.mainScreen().bounds.size.height
 
@@ -23,6 +25,8 @@ class ViewController: UIViewController {
     
     var currentScore = 0
     var buttonToTap = 0
+    
+    var player = GKLocalPlayer.localPlayer()
     
     
     override func viewDidLoad() {
@@ -104,7 +108,26 @@ class ViewController: UIViewController {
             self.runLevel()
         }
         
-//        self.resetTimerWithSpeed(5)
+        // getting game center
+        
+        //listener for if the authentification changed
+        var nc = NSNotificationCenter.defaultCenter()
+        
+        nc.addObserver(self, selector: Selector("authChanged"), name: GKPlayerAuthenticationDidChangeNotificationName, object: nil)
+        
+        if player.authenticated == false {
+            
+            player.authenticateHandler = { (viewController, error) -> Void in
+                
+            if viewController != nil {
+                self.presentViewController(viewController, animated: true, completion: nil)
+                
+                }
+                
+            }
+
+        }
+
         
         for i in 0...100 {
             
@@ -160,7 +183,16 @@ class ViewController: UIViewController {
             
         } else {
             
+            currentScore = 0
             println("Fail")
+            
+            var time = dispatch_time(DISPATCH_TIME_NOW, Int64(3.0 * Double(NSEC_PER_SEC)))
+            
+            dispatch_after(time, dispatch_get_main_queue()) { () -> Void in
+                
+            self.runLevel()
+            
+            }
         }
         
     }
@@ -195,6 +227,12 @@ class ViewController: UIViewController {
         
         
         resetTimerWithSpeed(10)
+    }
+    
+    func submitScore() {
+        
+        var player = GKPlayer()
+        
     }
     
     
