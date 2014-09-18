@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     
     let scoreLabel = UILabel()
     
-    let timer = NSTimer()
+    var timer: NSTimer?
     
     
     override func viewDidLoad() {
@@ -91,10 +91,39 @@ class ViewController: UIViewController {
         }
         
         
+        timerBar.backgroundColor = UIColor.whiteColor()
+        timerBar.frame = CGRectMake(0,0,0,6)
+        self.view.addSubview(timerBar)
+        
+        
         // Do any additional setup after loading the view, typically from a nib.
     }
     
-    func resetTimerWithSpeed(speed: Int)
+    func resetTimerWithSpeed(speed: Double) {
+        
+        if timer != nil {
+            
+            timer!.invalidate()
+        }
+        
+        timer = NSTimer(timeInterval: speed, target: self, selector: Selector("timerDone"), userInfo: nil, repeats: false)
+    
+        timerBar.frame.size.width = SCREEN_WIDTH
+        
+        UIView.animateWithDuration(speed, animations: { () -> Void in
+       
+            self.timerBar.frame.size.width = 0
+            
+        })
+        
+
+    }
+    
+    func timerDone() {
+        
+        println("Game Over")
+        
+    }
     
     func buttonTapped(button: UIButton) {
         
