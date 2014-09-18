@@ -27,6 +27,7 @@ class ViewController: UIViewController {
     var buttonToTap = 0
     
     var player = GKLocalPlayer.localPlayer()
+    var allLeaderboards: [String:GKLeaderboard] = Dictionary()
     
     
     override func viewDidLoad() {
@@ -229,7 +230,33 @@ class ViewController: UIViewController {
         resetTimerWithSpeed(10)
     }
     
+    func authChanged() {
+        
+        if player.authenticated == false { return }
+        
+        GKLeaderboard.loadLeaderboardsWithCompletionHandler { (leaderboards, error) -> Void in
+            
+            for leaderboard in leaderboards as [GKLeaderboard] {
+                
+                self.allLeaderboards[leaderboard.identifier] = leaderboard
+            }
+        }
+        
+    }
+    
     func submitScore() {
+        
+       var scoreReporter = GKScore(leaderboardIdentifier: "total_taps")
+        
+        scoreReporter.value = Int64(currentScore)
+        scoreReporter.context = 0
+        
+        GKScore.reportScores([scoreReporter], withCompletionHandler: { (error) -> Void in
+            
+            println("score reported")
+            
+        })
+        
         
         var player = GKPlayer()
         
