@@ -13,14 +13,16 @@ let SCREEN_HEIGHT = UIScreen.mainScreen().bounds.size.height
 
 
 class ViewController: UIViewController {
-
+    
+    var timer: NSTimer?
     let timerBar = UIView()
     
     let buttons = [UIButton(),UIButton(),UIButton()]
     
     let scoreLabel = UILabel()
     
-    var timer: NSTimer?
+    var currentScore = 0
+    var buttonToTap = 0
     
     
     override func viewDidLoad() {
@@ -76,6 +78,7 @@ class ViewController: UIViewController {
             var x = (SCREEN_WIDTH / 2.0) - (size / 2.0)
             var y = (SCREEN_HEIGHT / 2.0) - (size / 2.0) + (CGFloat(i - 1) * (size + 20))
             
+            button.alpha = 0.6
             button.frame = CGRectMake(x, y, size, size)
             button.layer.cornerRadius = size / 2.0
             button.backgroundColor = UIColor.whiteColor()
@@ -90,12 +93,23 @@ class ViewController: UIViewController {
             
         }
         
-        
         timerBar.backgroundColor = UIColor.whiteColor()
         timerBar.frame = CGRectMake(0,0,0,30)
         self.view.addSubview(timerBar)
         
-        self.resetTimerWithSpeed(5)
+        var time = dispatch_time(DISPATCH_TIME_NOW, Int64(3.0 * Double(NSEC_PER_SEC)))
+        
+        dispatch_after(time, dispatch_get_main_queue()) { () -> Void in
+            
+            self.runLevel()
+        }
+        
+//        self.resetTimerWithSpeed(5)
+        
+        for i in 0...100 {
+            
+            runLevel()
+        }
         
         
         // Do any additional setup after loading the view, typically from a nib.
@@ -110,6 +124,7 @@ class ViewController: UIViewController {
         
         timer = NSTimer.scheduledTimerWithTimeInterval(speed, target: self, selector: Selector("timerDone"), userInfo: nil, repeats: false)
         
+        timerBar.layer.removeAllAnimations()
         timerBar.frame.size.width = SCREEN_WIDTH
         
         UIView.animateWithDuration(speed, animations: { () -> Void in
@@ -138,7 +153,51 @@ class ViewController: UIViewController {
         
         println(button.tag)
         
+        if buttonToTap == button.tag {
+            
+            currentScore++
+            runLevel()
+            
+        } else {
+            
+            println("Fail")
+        }
+        
     }
+    
+    func runLevel() {
+        
+        buttonToTap = Int(arc4random_uniform(3))
+        
+        var button = buttons[buttonToTap]
+        
+        button.alpha = 1.0
+        
+//        UIView.animateWithDuration(1.0, animations: { () -> Void in
+//            
+//            button.alpha = 0.6
+//            
+//        })
+        
+        
+        // allowing the user to tap while the circle is lit up
+        
+        UIView.animateWithDuration(1.0, delay: 0, options: .AllowUserInteraction, animations: { () -> Void in
+            
+                button.alpha = 0.6
+            
+            }) { (succeeded: Bool) -> Void in
+                
+                
+        }
+        
+        
+        
+        
+        resetTimerWithSpeed(10)
+    }
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
